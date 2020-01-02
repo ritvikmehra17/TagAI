@@ -1,0 +1,6 @@
+ibm_watson
+json
+sqlalchemy
+pymail
+pyqt5
+pickle
