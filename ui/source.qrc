@@ -1,0 +1,25 @@
+<RCC>
+  <qresource prefix="images">
+    <file>assets/images/bg.jpg</file>
+    <file>assets/images/bg2.jpg</file>
+    <file>assets/images/bg3.jpg</file>
+    <file>assets/images/bg4.jpg</file>
+    <file>assets/images/bg5.jpg</file>
+    <file>assets/images/bg6.jpg</file>
+    <file>assets/images/bg7.jpg</file>
+    <file>assets/images/bg8.jpg</file>
+    <file>assets/images/forgot_icon.jpg</file>
+    <file>assets/images/forgot_icon2.jpg</file>
+    <file>assets/images/login.jpg</file>
+    <file>assets/images/login_bg.jpg</file>
+    <file>assets/images/login_icon.png</file>
+    <file>assets/images/login2.png</file>
+    <file>assets/images/login3.png</file>
+    <file>assets/images/login4.png</file>
+    <file>assets/images/login5.png</file>
+    <file>assets/images/logo.png</file>
+    <file>assets/images/placeholder.jpg</file>
+    <file>assets/images/register_icon.png</file>
+    <file>assets/images/signup.png</file>
+  </qresource>
+</RCC>

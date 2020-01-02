@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>wrapper</class>
+ <widget class="QMainWindow" name="wrapper">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>502</width>
+    <height>762</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="container">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>100</y>
+      <width>411</width>
+      <height>571</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame
+{
+	background:rgba(0,0,0,0.7);
+	border-radius:5px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="btnLogin">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>450</y>
+       <width>341</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="mouseTracking">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background:#fbdd7a;
+color:Black;
+border-radius:5px;
+
+	font: 75 italic 14pt &quot;Calibri&quot;;
+}
+QPushButton:hover
+{
+background:#fca22c;
+color:Black;
+border-radius:5px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Login</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="editEmail">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>130</y>
+       <width>351</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit
+{
+font: 75 italic 15pt &quot;Calibri&quot;;
+background:transparent;
+border:none;
+color:#fbdd7a;
+border-bottom:2px solid white;
+}</string>
+     </property>
+     <property name="inputMethodHints">
+      <set>Qt::ImhEmailCharactersOnly</set>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Email</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="editPass">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>240</y>
+       <width>351</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit
+{
+font: 75 italic 15pt &quot;Calibri&quot;;
+background:transparent;
+border:none;
+color:#fbdd7a;
+border-bottom:2px solid white;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+     </property>
+     <property name="placeholderText">
+      <string>Password</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnForgot">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>300</y>
+       <width>124</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="mouseTracking">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background:transparent;
+color:#9955ff;
+border-radius:15px;
+font: 75 italic 10pt &quot;Calibri&quot;;
+}
+QPushButton:hover
+{
+color:green;
+border-color: rgb(231, 138, 97);
+border-radius:15px;
+}</string>
+     </property>
+     <property name="text">
+      <string>forgot password?</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnViewRegister">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>510</y>
+       <width>211</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="mouseTracking">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background:transparent;
+color:#9955ff;
+border-radius:15px;
+font: 75 italic 10pt &quot;Calibri&quot;;
+}
+QPushButton:hover
+{
+color:green;
+border-color: rgb(231, 138, 97);
+border-radius:15px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Sign Up for new Account</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelError">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>360</y>
+       <width>341</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(255, 255, 255,0);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>40</y>
+       <width>161</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit
+
+{
+background:transparent;
+color:#fbdd7a;
+border-radius:15px;
+font: 75 Bold Italic 30pt &quot;Calibri&quot;;
+	
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Sign In</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbRemember">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>290</y>
+       <width>151</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">padding:10px;
+background:transparent;
+color:#9955ff;
+border-radius:15px;
+font: 75 italic 10pt &quot;Calibri&quot;;
+</string>
+     </property>
+     <property name="text">
+      <string>Remember Me</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QToolButton" name="toolButton">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>40</y>
+      <width>141</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QToolButton
+{
+background:rgba(251, 221, 122,0.78);
+
+border-radius:5px;
+}</string>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>assets/images/login_icon.png</normaloff>assets/images/login_icon.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>500</width>
+      <height>500</height>
+     </size>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="autoRepeat">
+     <bool>false</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="bgImage">
+    <property name="geometry">
+     <rect>
+      <x>-10</x>
+      <y>-10</y>
+      <width>531</width>
+      <height>811</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image: url(:/images/assets/images/bg.jpg);</string>
+    </property>
+   </widget>
+   <zorder>bgImage</zorder>
+   <zorder>frame</zorder>
+   <zorder>toolButton</zorder>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>editEmail</tabstop>
+  <tabstop>editPass</tabstop>
+  <tabstop>cbRemember</tabstop>
+  <tabstop>btnLogin</tabstop>
+  <tabstop>btnViewRegister</tabstop>
+  <tabstop>btnForgot</tabstop>
+  <tabstop>toolButton</tabstop>
+  <tabstop>bgImage</tabstop>
+  <tabstop>lineEdit</tabstop>
+ </tabstops>
+ <resources>
+  <include location="source.qrc"/>
+ </resources>
+ <connections/>
+</ui>
