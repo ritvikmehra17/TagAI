@@ -322,6 +322,17 @@ font: 75 Bold Italic 30pt &quot;Calibri&quot;;
    <zorder>toolButton_2</zorder>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>editName</tabstop>
+  <tabstop>editEmail</tabstop>
+  <tabstop>editPass</tabstop>
+  <tabstop>editCPass</tabstop>
+  <tabstop>btnRegister</tabstop>
+  <tabstop>btnViewLogin</tabstop>
+  <tabstop>toolButton_2</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>bgImage</tabstop>
+ </tabstops>
  <resources>
   <include location="source.qrc"/>
  </resources>

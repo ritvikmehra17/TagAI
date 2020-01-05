@@ -12,17 +12,17 @@ Session = sessionmaker(bind=engine)
 class User(Base):
     __tablename__ = 'users'
     id = Column( Integer, primary_key=True)
-    username =Column( String(64),nullable=False)
+    username =Column( String(64),nullable=False,unique=True)
     email = Column( String(64),nullable=False, unique=True)
     password = Column( String(64),nullable=False)
     created = Column(String(32), default=datetime.now())
-
 
 class Upload(Base):
     __tablename__ = 'uploads'
     id = Column( Integer, primary_key=True)
     image = Column( String(64),nullable=False, unique=False)
     lastupload = Column(String(32), default=datetime.now())
+    uploader = Column(String(32))
 
 
 

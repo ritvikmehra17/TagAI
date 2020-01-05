@@ -11,12 +11,11 @@ from PIL import Image
 from datetime import datetime
 from object_detection import execute
 from tagFinder import tagQuery
-# from PyQt5.QtCore import QBasicTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar
 from PyQt5.QtCore import QTimer
-# from PyQt5.Qt import QApplication, QClipboard
-# from PyQt5.QtWidgets import QMainWindow, QWidget, QPlainTextEdit
-# import win32clipboard as clipboard
+import clipboard
+import cv2
+import sqlalchemy
 
 
 
@@ -38,6 +37,7 @@ class LoginScreen(QtWidgets.QMainWindow):
             
             self.btnLogin=self.findChild(QtWidgets.QPushButton,'btnLogin')
             self.bgImage = self.findChild(QtWidgets.QGraphicsView,'bgImage')
+         
             self.btnViewRegister = self.findChild(QtWidgets.QPushButton,'btnViewRegister')
             self.btnForgot = self.findChild(QtWidgets.QPushButton,'btnForgot')
 
@@ -49,7 +49,7 @@ class LoginScreen(QtWidgets.QMainWindow):
             
             self.labelError = self.findChild(QtWidgets.QLabel,'labelError')
             self.bgImage.setStyleSheet("background-image:url(ui/assets/images/bg.jpg);")
-
+           
             self.btnLogin.clicked.connect(self.doValidation)
 
             self.cbRemember.stateChanged.connect(self.remember_me)
@@ -132,16 +132,34 @@ class RegisterScreen(QtWidgets.QMainWindow):
         password = self.editPass.text()
         cpassword = self.editCPass.text()
         if len(name) > 2 and len(name) <= 50:
+            if name.strip()=="":
+                msg.setText('username field cannot be empty ')
+                return
+            if email.strip()=="":
+                msg.setText('Email field cannot be empty ')
+                return    
             if cpassword == password:
-                newUser = User(username=name, email = email, password=password)
-                dbses.add(newUser)
-                dbses.commit()
-                msg.setText('successfully saved, please login to continue')
+                try:
+                    newUser = User(username=name, email = email, password=password)
+                    dbses.add(newUser)
+                    dbses.commit()
+                    msg.setText('successfully saved, please login to continue')
+                    self.create_user_folder(name)
+                except sqlalchemy.exc.IntegrityError :
+                    msg.setText("User already exists")
             else:
                 msg.setText('password and confirm password do not match')
         else:
             msg.setText('name should be in range of 3-50 chars ')
     
+    def create_user_folder(self,name):
+        name = name.lower().replace(" ","_")
+        if not os.path.exists('uploads/users/'+name):
+            os.makedirs('uploads/users/'+name)
+            print("folder created")
+        else:
+            print('folder exists')
+
 
     
     def showNextWindow(self):
@@ -185,47 +203,10 @@ class Forgot_Password_Screen(QtWidgets.QMainWindow):
         else:
             self.labelError.setText("Invalid Email")   
     
-        
-        
-        
-      
-
-
-
     def gotBackToLogin(self):
         self.window = LoginScreen()
         self.close() 
 
-#####################################################################################
-#THREAD CLASSES 
-#####################################################################################
-class ObjectDetectionThread(QThread):
-    """
-    Runs a counter thread.
-    """
-    taskCompleted = pyqtSignal(dict)
-
-    def __init__(self,imgpath,parent=None):
-        QThread.__init__(self, parent)
-        self.imgpath = imgpath
-
-    def run(self):
-        results = execute(self.imgpath)
-        self.taskCompleted.emit(results)
-
-class ScraperThread(QThread):
-    """
-    Runs a counter thread.
-    """
-    taskCompleted = pyqtSignal(list)
-
-    def __init__(self,word,parent=None):
-        QThread.__init__(self, parent)
-        self.word = word
-
-    def run(self):
-        results = tagQuery(self.word)
-        self.taskCompleted.emit(results)
 #####################################################################################
 #HOME PAGE
 #####################################################################################
@@ -241,6 +222,7 @@ class HomeScreen(QtWidgets.QMainWindow):
 
         self.btnBrowse_img=self.findChild(QtWidgets.QPushButton,'btnBrowse_img')
         self.btnClear_img=self.findChild(QtWidgets.QPushButton,'btnClear_img')
+        self.copybin = self.findChild(QtWidgets.QPushButton,'copybin') 
         self.btnObj_Detection=self.findChild(QtWidgets.QPushButton,'btnObj_Detection')
         self.btnLogout=self.findChild(QtWidgets.QPushButton,'btnLogout')
         self.btnQuit=self.findChild(QtWidgets.QPushButton,'btnQuit')
@@ -249,6 +231,8 @@ class HomeScreen(QtWidgets.QMainWindow):
         self.label_username=self.findChild(QtWidgets.QLabel,'label_username')
         self.show_img = self.findChild(QtWidgets.QGraphicsView,'show_img')
         self.show_img.setStyleSheet("background-image:url(ui/assets/images/placeholder.jpg) center;")
+        self.copybin.setStyleSheet("background:url(ui/assets/images/copy.png) center no-repeat;")
+
         self.items_in_img = self.findChild(QtWidgets.QListWidget,'items_in_img')
         self.tag_in_img = self.findChild(QtWidgets.QListWidget,'tag_in_img')
         self.instruction= self.findChild(QtWidgets.QGroupBox,'instructions')
@@ -271,23 +255,36 @@ class HomeScreen(QtWidgets.QMainWindow):
         self.btnClear_img.clicked.connect(self.clear_img)
         self.btnObj_Detection.clicked.connect(self.performObjDetection)
         self.btnGet_Tag.clicked.connect(self.get_tag)
-        self.load_img_list()
+        
         self.items_in_img.clicked.connect(self.load_selected_tag)
+        self.copybin.clicked.connect(self.copytags)
+        self.btnQuit.clicked.connect(self.quit)
+        self.btnGet_Tag.setEnabled(False)
+        self.btnObj_Detection.setEnabled(False)
         self.show()
 
         with open('session/log','rb') as f:
             user = pickle.load(f)     
-            self.label_username.setText(user.username)
+            self.username = user.username
+            self.label_username.setText(user.username) 
+            name = user.username.lower().replace(" ","_")
+            if not os.path.exists('uploads/users/'+name):
+                os.makedirs('uploads/users/'+name)
+            self.upload_path = "uploads/users/"+name
+            print("folder selected =>",self.upload_path)
+        self.load_img_list()        
     
     def load_img_list(self):
         dbses = Session()
-        results = dbses.query(Upload).all()
+        results = dbses.query(Upload).filter(Upload.uploader == self.username).all()
+        self.listView.clear()
         for pos,imgObj in enumerate(results):
             self.listView.insertItem(pos,imgObj.image)
 
     def load_selected_img(self,qmodelindex):
         item = self.listView.currentItem()
-        path = f'uploads/{item.text()}'
+        path = f'{item.text()}'
+        print(path)
         if os.path.exists(path):
             self.instruction.resize(0,0)
             self.image_path = path
@@ -296,6 +293,10 @@ class HomeScreen(QtWidgets.QMainWindow):
             self.tag_in_img.clear()
             self.labelMsg.setText("")
             self.show_img.setStyleSheet(f"background:url({path}) center no-repeat #fff;")
+            self.btnGet_Tag.setEnabled(True)
+            self.btnObj_Detection.setEnabled(True)
+            
+            return(item.text())    
         else:
             print('image not found')
 
@@ -319,16 +320,17 @@ class HomeScreen(QtWidgets.QMainWindow):
         return (result)      
 
     def get_tag(self):
+        self.tag_in_img.clear()
         self.progressBarTags.show()
         # 1st 5 tags from detect tags in image
         if self.is_img_uploaded:
             if self.results:
-                for pos,item, in enumerate(self.results.get('images')):
+                for pos,item, in enumerate(self.results):
                     first_5_tag=""
-                    print(pos,'----------------',self.results,'==================',type(item))
+                    ###print(pos,'----------------',self.results,'==================',type(item))
                     result=(pos,str(item.get('class'))+" ("+str(item.get('score'))+")")
                     print(result)
-                    print(type(self.results),self.results)
+                    ###print(type(self.results),self.results)
                     if pos < 5:
                         first_5_tag+=(str(item.get('class'))+" ("+str(item.get('score'))+")")
                         #print(first_5_tag)
@@ -372,11 +374,15 @@ class HomeScreen(QtWidgets.QMainWindow):
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","JPG (*.jpg);;JPEG (*.jpeg);;PNG (*.png)", options=options)
         if fileName:
+
             self.image_path = self.img_resize(fileName)
             print(self.image_path)
             self.show_img.setStyleSheet(f"background:url({self.image_path}) center no-repeat #fff;")
             self.instruction.resize(0,0)
             self.is_img_uploaded = True
+            self.btnGet_Tag.setEnabled(True)
+            self.btnObj_Detection.setEnabled(True)
+            self.labelMsg.setText("")
         else:
             self.labelMsg.setText("No Image Selected")
             
@@ -396,7 +402,7 @@ class HomeScreen(QtWidgets.QMainWindow):
 
     def img_resize(self,fileName):
         basewidth = 600
-        img = Image.open(fileName)
+        img = Image.open(fileName).convert('RGB')
         w,h = img.size
         if w>h:
             wpercent = (basewidth/float(w))
@@ -407,25 +413,29 @@ class HomeScreen(QtWidgets.QMainWindow):
             wsize = int((float(w)*float(hpercent)))
             img = img.resize((wsize,basewidth), Image.LANCZOS)
 
-        path = f'uploads/img_{datetime.now().strftime("%Y%m%d%H%M%S")}.jpg'
+        path = f'{self.upload_path}/img_{datetime.now().strftime("%Y%m%d%H%M%S")}.jpg'
         print(path)
         img.save(path)
 
         dbses = Session()
         image = f'img_{datetime.now().strftime("%Y%m%d%H%M%S")}.jpg'
-        print(len(image))
+        print("len of img",len(image))
         
-        if len(image) > 2 and len(image) <= 50:
-            newUpload = Upload(image=image)
+        if len(image) > 2 and len(image) <= 150:
+            print(path)
+            newUpload = Upload(image=path,uploader=self.username)
             dbses.add(newUpload)
             dbses.commit()
+            self.load_img_list()
         return path
 
     def clear_img(self):
         self.show_img.setStyleSheet("background-image:url(ui/assets/images/placeholder.jpg) center;") 
-        self.instruction.resize(400,180)
+        self.instruction.resize(640,180)
         self.labelMsg.setText("")
         self.is_img_uploaded = False
+        self.btnGet_Tag.setEnabled(False)
+        self.btnObj_Detection.setEnabled(False)
         self.items_in_img.clear()
         self.tag_in_img.clear()
              
@@ -450,4 +460,51 @@ class HomeScreen(QtWidgets.QMainWindow):
             self.items_in_img.insertItem(pos,str(item.get('class'))+" ("+str(item.get('score'))+")")
             # result=(pos,str(item.get('class'))+" ("+str(item.get('score'))+")")
         self.progressBar.hide()
-        self.results = results
+        self.results = data
+
+    def copytags(self):
+        itemsTextList =  [str(self.tag_in_img.item(i).text()) for i in range(self.tag_in_img.count())]
+        tags=""
+        tagString=""
+        for pos,item, in enumerate(itemsTextList):
+            tags=(str(item))
+            tagString+=(tags.split()[0])+" "
+        clipboard.copy(tagString)
+        self.labelMsg.setText("Tags copied")
+
+    def quit(self):
+        sys.exit(0)   
+
+
+#####################################################################################
+#THREAD CLASSES 
+#####################################################################################
+class ObjectDetectionThread(QThread):
+    """
+    Runs a counter thread.
+    """
+    taskCompleted = pyqtSignal(dict)
+
+    def __init__(self,imgpath,parent=None):
+        QThread.__init__(self, parent)
+        self.imgpath = imgpath
+
+    def run(self):
+        results = execute(self.imgpath)
+        self.taskCompleted.emit(results)
+
+class ScraperThread(QThread):
+    """
+    Runs a counter thread.
+    """
+    taskCompleted = pyqtSignal(list)
+
+    def __init__(self,word,parent=None):
+        QThread.__init__(self, parent)
+        self.word = word
+
+    def run(self):
+        results = tagQuery(self.word)
+        self.taskCompleted.emit(results)
+
+
