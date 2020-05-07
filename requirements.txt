@@ -1,6 +1,5 @@
 ibm_watson
-json
+requests
 sqlalchemy
-pymail
 pyqt5
-pickle
+clipboard

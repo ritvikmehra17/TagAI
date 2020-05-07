@@ -10,6 +10,10 @@ def tagQuery(search_term):
         starturl = f"{url}q={search_term}&opt=top&sp={page}"
         print('getting data from',starturl,'...')
         soup = mps.get(starturl)
+        if page>100:
+            break
+        if len(scraped_tags)>100:
+            break
         if not soup:
             print('scraper closed')
             break
