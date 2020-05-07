@@ -12,7 +12,7 @@ Session = sessionmaker(bind=engine)
 class User(Base):
     __tablename__ = 'users'
     id = Column( Integer, primary_key=True)
-    username =Column( String(64),nullable=False)
+    username =Column( String(64),nullable=False,unique=True)
     email = Column( String(64),nullable=False, unique=True)
     password = Column( String(64),nullable=False)
     created = Column(String(32), default=datetime.now())

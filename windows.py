@@ -15,6 +15,10 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar
 from PyQt5.QtCore import QTimer
 import clipboard
 import cv2
+<<<<<<< HEAD
+=======
+import sqlalchemy
+>>>>>>> e2ea88f41740565708dfe665543d88c494532ca8
 
 
 
@@ -131,12 +135,29 @@ class RegisterScreen(QtWidgets.QMainWindow):
         password = self.editPass.text()
         cpassword = self.editCPass.text()
         if len(name) > 2 and len(name) <= 50:
+            if name.strip()=="":
+                msg.setText('username field cannot be empty ')
+                return
+            if email.strip()=="":
+                msg.setText('Email field cannot be empty ')
+                return    
             if cpassword == password:
+<<<<<<< HEAD
                 newUser = User(username=name, email = email, password=password)
                 dbses.add(newUser)
                 dbses.commit()
                 msg.setText('successfully saved, please login to continue')
                 self.create_user_folder(name)
+=======
+                try:
+                    newUser = User(username=name, email = email, password=password)
+                    dbses.add(newUser)
+                    dbses.commit()
+                    msg.setText('successfully saved, please login to continue')
+                    self.create_user_folder(name)
+                except sqlalchemy.exc.IntegrityError :
+                    msg.setText("User already exists")
+>>>>>>> e2ea88f41740565708dfe665543d88c494532ca8
             else:
                 msg.setText('password and confirm password do not match')
         else:
